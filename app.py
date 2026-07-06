@@ -1,6 +1,13 @@
+import os
+
 from flask import Flask, jsonify
 
 app = Flask(__name__)
+
+
+@app.errorhandler(404)
+def not_found(e):
+    return jsonify({"error": "Not found"}), 404
 
 USERS = {
     1: {"name": "Alice", "email": "alice@example.com"},
@@ -18,4 +25,4 @@ def get_user(id):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=os.environ.get("FLASK_DEBUG", "0") == "1")

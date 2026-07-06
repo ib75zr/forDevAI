@@ -86,15 +86,39 @@ class TestGetUserEndpoint(unittest.TestCase):
         resp = self.client.get("/users/abc")
         self.assertEqual(resp.status_code, 404)
 
+    def test_invalid_id_type_returns_json(self):
+        """GET /users/abc should return JSON 404 (global error handler)."""
+        resp = self.client.get("/users/abc")
+        self.assertEqual(resp.content_type, "application/json")
+
     def test_negative_id_returns_404(self):
         """GET /users/-1 should return 404 (not in USERS dict)."""
         resp = self.client.get("/users/-1")
         self.assertEqual(resp.status_code, 404)
 
+    def test_negative_id_returns_json(self):
+        """GET /users/-1 should return JSON 404 (global error handler)."""
+        resp = self.client.get("/users/-1")
+        self.assertEqual(resp.content_type, "application/json")
+
     def test_zero_id_returns_404(self):
         """GET /users/0 should return 404 (not in USERS dict)."""
         resp = self.client.get("/users/0")
         self.assertEqual(resp.status_code, 404)
+
+    # ── Global 404 handler consistency ─────────────────────────────────
+
+    def test_nonexistent_route_returns_json_404(self):
+        """GET /nonexistent should return JSON 404 (global error handler)."""
+        resp = self.client.get("/nonexistent")
+        self.assertEqual(resp.status_code, 404)
+        self.assertEqual(resp.content_type, "application/json")
+
+    def test_nonexistent_route_has_error_key(self):
+        """Global 404 response should contain an 'error' key."""
+        resp = self.client.get("/nonexistent")
+        data = resp.get_json()
+        self.assertIn("error", data)
 
     # ── HTTP method guard ──────────────────────────────────────────────
 
