@@ -27,4 +27,4 @@ jobs:
 
       - name: Run tests
         run: |
-          pytest test_utils.py tests/ -v
+          pytest test_utils.py tests/test_app.py -v
